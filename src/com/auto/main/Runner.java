@@ -79,6 +79,7 @@ public class Runner extends UiAutomatorTestCase {
 		UiObject video = new UiObject(
 				new UiSelector()
 						.resourceId("com.youku.phone:id/media_picker_item_image_thumbnail"));
+
 		video.clickAndWaitForNewWindow();
 		// 下一步
 		UiObject next = new UiObject(
@@ -154,13 +155,13 @@ public class Runner extends UiAutomatorTestCase {
 	    try {
 	        Runtime.getRuntime().exec(
 	                "am start -n com.youku.phone/com.youku.ui.activity.HomePageActivity");
-	        sleep(1000);
+	        sleep(2000);
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    }
 	    for (int i = 0; i < 5; i++) {
 	        sleep(1000);
-	        if (getUiDevice().getCurrentPackageName().contains(
+	        if (getDevice().getCurrentPackageName().contains(
 	                "com.youku.phone")) {
 	            return true;
 	        }
