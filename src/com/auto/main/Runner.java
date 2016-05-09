@@ -1,18 +1,11 @@
 package com.auto.main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-
-import android.content.Intent;
-import android.view.KeyEvent;
-
 import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.core.UiObject;
 import com.android.uiautomator.core.UiObjectNotFoundException;
 import com.android.uiautomator.core.UiScrollable;
 import com.android.uiautomator.core.UiSelector;
-import com.android.uiautomator.core.UiWatcher;
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
 import com.auto.input.Utf7ImeHelper;
 
@@ -20,34 +13,41 @@ public class Runner extends UiAutomatorTestCase {
 
 	public void testDemo() throws UiObjectNotFoundException, IOException,
 			InterruptedException {
-
-		// findAndRunApp();
-
-		login();
-
-		uploadVideo();
 		
-		logout();
+		startApp();
+
+//		findAndRunApp();
+
+//		login();
+//
+//		uploadVideo();
+//
+//		logout();
 
 	}
 
-	//退出登录
+	// 退出登录
 	private void logout() throws UiObjectNotFoundException {
-		UiObject settings = new UiObject(new UiSelector()
+		UiObject settings = new UiObject(
+				new UiSelector()
 						.resourceId("com.youku.phone:id/usercenter_btn_settings"));
 		settings.clickAndWaitForNewWindow();
-		
+
 		UiScrollable content = new UiScrollable(
 				new UiSelector().scrollable(true));
 		content.setAsVerticalList();
-		content.scrollIntoView(new UiSelector().resourceId("com.youku.phone:id/exit"));
-		
-		UiObject exit = new UiObject(new UiSelector().resourceId("com.youku.phone:id/exit"));
+		content.scrollIntoView(new UiSelector()
+				.resourceId("com.youku.phone:id/exit"));
+
+		UiObject exit = new UiObject(
+				new UiSelector().resourceId("com.youku.phone:id/exit"));
 		exit.clickAndWaitForNewWindow();
-		
-		UiObject positive = new UiObject(new UiSelector().resourceId("com.youku.phone:id/negtive_btn_layout"));
+
+		UiObject positive = new UiObject(
+				new UiSelector()
+						.resourceId("com.youku.phone:id/negtive_btn_layout"));
 		positive.clickAndWaitForNewWindow();
-		
+
 		pressBack(1);
 	}
 
@@ -91,11 +91,11 @@ public class Runner extends UiAutomatorTestCase {
 		UiObject uploadToYouku = new UiObject(
 				new UiSelector().resourceId("com.youku.phone:id/video_upload"));
 		uploadToYouku.clickAndWaitForNewWindow();
-		
+
 		sleepForTime(30000);
-		
+
 		pressBack(2);
-		
+
 	}
 
 	// youku账号登录
@@ -131,14 +131,19 @@ public class Runner extends UiAutomatorTestCase {
 		lBtn.clickAndWaitForNewWindow(5000);
 	}
 	
-	private void pressBack(int times){
+	private UiDevice getDevice(){
 		UiDevice device = getUiDevice();
-		for(int i=0;i<times;i++){
+		return device;
+	}
+
+	private void pressBack(int times) {
+		UiDevice device = getDevice();
+		for (int i = 0; i < times; i++) {
 			device.pressBack();
 		}
 	}
-	
-	private void sleepForTime(long time){
+
+	private void sleepForTime(long time) {
 		try {
 			Thread.sleep(time);
 		} catch (InterruptedException ex) {
@@ -146,34 +151,23 @@ public class Runner extends UiAutomatorTestCase {
 		}
 	}
 
-	// 寻找和打开APP
-	private void findAndRunApp() throws UiObjectNotFoundException, IOException,
-			InterruptedException {
-
-		String line;
-		String cmd = "adb shell am start -n com.youku.phone";
-		String cmdreturn = "";
-		Runtime run = Runtime.getRuntime();
-		Process pr = run.exec(cmd);
-		pr.waitFor();
-		BufferedReader buf = new BufferedReader(new InputStreamReader(
-				pr.getInputStream()));
-		while ((line = buf.readLine()) != null) {
-			System.out.println(cmdreturn);
-		}
-
-		// UiDevice device = getUiDevice();
-		// device.pressHome();
-		//
-		// UiScrollable appview = new UiScrollable (new
-		// UiSelector().scrollable(true));
-		// appview.setAsHorizontalList();
-		//
-		// UiObject openapp = appview.getChildByText(new
-		// UiSelector().text("QQ"),"QQ");
-		// openapp.clickAndWaitForNewWindow();
-		// sleep(5000);//睡眠5s
-		// System.out.println("sleep success");
+	// 打开youku APP
+	private boolean startApp() {
+	    try {
+	        Runtime.getRuntime().exec(
+	                "am start -n com.youku.phone/com.youku.ui.activity.HomePageActivity");
+	        sleep(1000);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    for (int i = 0; i < 5; i++) {
+	        sleep(1000);
+	        if (getUiDevice().getCurrentPackageName().contains(
+	                "com.youku.phone")) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 }
