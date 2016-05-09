@@ -16,13 +16,11 @@ public class Runner extends UiAutomatorTestCase {
 		
 		startApp();
 
-//		findAndRunApp();
+		login();
 
-//		login();
-//
-//		uploadVideo();
-//
-//		logout();
+		uploadVideo();
+
+		logout();
 
 	}
 
